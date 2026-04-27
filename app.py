@@ -16,6 +16,12 @@ from PIL import Image
 from utils.model import ResNet9
 import joblib
 from flask import jsonify
+
+from dotenv import load_dotenv
+import os
+from waitress import serve
+
+
 # ==============================================================================================
 
 # -------------------------LOADING THE TRAINED MODELS -----------------------------------------------
@@ -80,13 +86,21 @@ crop_recommendation_model = joblib.load(
 # Custom functions for calculations
 
 
+load_dotenv()
+
+API_KEY = os.getenv("api_key")
+
+
 def weather_fetch(city_name):
     """
     Fetch and returns the temperature and humidity of a city
     :params: city_name
     :return: temperature, humidity
     """
-    api_key = "19870883609a5930562583df6ba2fd25"
+
+
+    api_key = API_KEY
+
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
     complete_url = base_url + "appid=" + api_key + "&q=" + city_name
@@ -210,5 +224,10 @@ def disease_prediction():
 
 
 # ===============================================================================================
+
 if __name__ == '__main__':
     app.run(debug=False)
+
+if __name__ == "__main__":
+    serve(app, host="0.0.0.0", port=5000)
+
